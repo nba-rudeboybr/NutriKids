@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriKids – Educação Nutricional Interativa</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#2e7d32;--green-light:#4caf50;--green-pale:#e8f5e9;
+  --orange:#f57c00;--orange-light:#ff9800;--orange-pale:#fff3e0;
+  --blue:#1565c0;--blue-light:#2196f3;--blue-pale:#e3f2fd;
+  --pink:#c2185b;--pink-light:#e91e63;--pink-pale:#fce4ec;
+  --yellow:#f9a825;--purple:#7b1fa2;
+  --bg:#f5f9f5;--card:#fff;--border:#e0e0e0;
+  --text:#212121;--muted:#757575;
+  --radius:14px;--radius-sm:8px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 4px 24px rgba(0,0,0,.14);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+#app{min-height:100vh}
+button{cursor:pointer;border:none;font-family:inherit;font-size:1rem;transition:.2s}
+input,select,textarea{font-family:inherit;font-size:1rem;border:2px solid var(--border);border-radius:var(--radius-sm);padding:.6rem .9rem;width:100%;outline:none;transition:.2s;background:#fff}
+input:focus,select:focus,textarea:focus{border-color:var(--green-light)}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.25rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;border-radius:var(--radius-sm);font-weight:600;transition:.2s}
+.btn-primary{background:var(--green-light);color:#fff}.btn-primary:hover{background:var(--green)}
+.btn-secondary{background:var(--orange-light);color:#fff}.btn-secondary:hover{background:var(--orange)}
+.btn-outline{background:transparent;color:var(--green);border:2px solid var(--green-light)}.btn-outline:hover{background:var(--green-pale)}
+.btn-danger{background:#e53935;color:#fff}.btn-danger:hover{background:#b71c1c}
+.btn-blue{background:var(--blue-light);color:#fff}.btn-blue:hover{background:var(--blue)}
+.btn-sm{padding:.4rem .9rem;font-size:.85rem}
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:20px;font-size:.75rem;font-weight:700}
+.badge-green{background:var(--green-pale);color:var(--green)}
+.badge-orange{background:var(--orange-pale);color:var(--orange)}
+.badge-blue{background:var(--blue-pale);color:var(--blue)}
+.badge-pink{background:var(--pink-pale);color:var(--pink)}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-weight:600;margin-bottom:.35rem;font-size:.9rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.alert{padding:.8rem 1rem;border-radius:var(--radius-sm);margin-bottom:1rem;font-size:.9rem}
+.alert-error{background:#ffebee;color:#c62828;border-left:4px solid #e53935}
+.alert-success{background:var(--green-pale);color:var(--green);border-left:4px solid var(--green-light)}
+.alert-info{background:var(--blue-pale);color:var(--blue);border-left:4px solid var(--blue-light)}
+h1{font-size:1.8rem}h2{font-size:1.4rem}h3{font-size:1.1rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.flex{display:flex;align-items:center}.flex-between{display:flex;align-items:center;justify-content:space-between}
+.gap-1{gap:.5rem}.gap-2{gap:1rem}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}
+.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:1rem}
+.text-center{text-align:center}.text-muted{color:var(--muted)}
+.progress-bar{height:10px;background:#e0e0e0;border-radius:5px;overflow:hidden}
+.progress-fill{height:100%;border-radius:5px;background:var(--green-light);transition:width .5s}
+.chip{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:20px;font-size:.8rem;font-weight:600;background:var(--green-pale);color:var(--green)}
+.divider{border:none;border-top:1px solid var(--border);margin:1rem 0}
+
+/* NAV */
+.navbar{background:var(--card);box-shadow:var(--shadow);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.navbar-brand{display:flex;align-items:center;gap:.5rem;font-size:1.3rem;font-weight:800;color:var(--green);cursor:pointer}
+.navbar-brand span{font-size:1.6rem}
+.navbar-links{display:flex;gap:.25rem}
+.nav-link{padding:.5rem .9rem;border-radius:var(--radius-sm);font-weight:600;font-size:.9rem;cursor:pointer;color:var(--text);background:none;border:none;transition:.2s}
+.nav-link:hover,.nav-link.active{background:var(--green-pale);color:var(--green)}
+.nav-link.pro:hover,.nav-link.pro.active{background:var(--blue-pale);color:var(--blue)}
+.user-menu{display:flex;align-items:center;gap:.75rem}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--green-light);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem}
+.avatar.pro{background:var(--blue-light)}
+
+/* LANDING */
+.landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;background:linear-gradient(135deg,#e8f5e9 0%,#fff3e0 50%,#e3f2fd 100%)}
+.landing-logo{font-size:4rem;margin-bottom:.5rem}
+.landing-title{font-size:2.8rem;font-weight:900;color:var(--green);margin-bottom:.5rem;text-align:center}
+.landing-sub{font-size:1.1rem;color:var(--muted);margin-bottom:3rem;text-align:center;max-width:480px}
+.role-cards{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem}
+.role-card{background:#fff;border-radius:20px;box-shadow:var(--shadow-lg);padding:2.5rem 2rem;cursor:pointer;transition:.25s;border:3px solid transparent;text-align:center;min-width:220px;max-width:260px}
+.role-card:hover{transform:translateY(-6px);box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.role-card.kid:hover{border-color:var(--orange-light)}
+.role-card.pro:hover{border-color:var(--blue-light)}
+.role-card .icon{font-size:3.5rem;margin-bottom:1rem}
+.role-card h2{margin-bottom:.5rem}
+.role-card p{color:var(--muted);font-size:.9rem}
+.landing-login{color:var(--muted);font-size:.9rem}
+.landing-login a{color:var(--green);font-weight:600;cursor:pointer;text-decoration:underline}
+
+/* AUTH */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;background:var(--bg)}
+.auth-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:2.5rem;width:100%;max-width:440px}
+.auth-header{text-align:center;margin-bottom:2rem}
+.auth-header .icon{font-size:2.5rem;margin-bottom:.5rem}
+.auth-tabs{display:flex;background:#f5f5f5;border-radius:var(--radius-sm);padding:4px;margin-bottom:1.5rem}
+.auth-tab{flex:1;padding:.5rem;border-radius:6px;text-align:center;cursor:pointer;font-weight:600;font-size:.9rem;transition:.2s;border:none;background:none}
+.auth-tab.active{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+
+/* MAIN LAYOUT */
+.main-layout{display:flex;min-height:calc(100vh - 60px)}
+.sidebar{width:220px;background:#fff;border-right:1px solid var(--border);padding:1rem 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;flex-shrink:0}
+.sidebar-nav{display:flex;flex-direction:column;gap:.1rem;padding:0 .5rem}
+.sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:var(--radius-sm);cursor:pointer;font-weight:600;font-size:.95rem;transition:.2s;border:none;background:none;width:100%;color:var(--text)}
+.sidebar-link:hover{background:var(--green-pale)}
+.sidebar-link.active{background:var(--green-pale);color:var(--green)}
+.sidebar-link.pro:hover,.sidebar-link.pro.active{background:var(--blue-pale);color:var(--blue)}
+.sidebar-link .icon{font-size:1.2rem}
+.content{flex:1;padding:1.5rem;overflow-y:auto;max-width:960px}
+
+/* DASHBOARD KID */
+.welcome-banner{background:linear-gradient(135deg,var(--green-light),var(--orange-light));color:#fff;border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.welcome-banner h1{font-size:1.5rem;margin-bottom:.25rem}
+.welcome-banner p{opacity:.9;font-size:.95rem}
+.welcome-banner .stars{position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.3}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:#fff;border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:var(--shadow)}
+.stat-card .stat-icon{font-size:2rem;margin-bottom:.25rem}
+.stat-card .stat-val{font-size:1.8rem;font-weight:900;color:var(--green)}
+.stat-card .stat-label{font-size:.8rem;color:var(--muted);font-weight:600}
+
+/* GAME/QUIZ */
+.quiz-container{max-width:600px;margin:0 auto}
+.quiz-question{background:#fff;border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow);margin-bottom:1rem}
+.quiz-q-number{font-size:.85rem;color:var(--muted);font-weight:600;margin-bottom:1rem}
+.quiz-q-text{font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;line-height:1.4}
+.quiz-options{display:flex;flex-direction:column;gap:.75rem}
+.quiz-option{padding:1rem 1.25rem;border-radius:var(--radius-sm);border:2px solid var(--border);background:#fff;cursor:pointer;font-size:1rem;text-align:left;transition:.2s;font-weight:500}
+.quiz-option:hover{border-color:var(--green-light);background:var(--green-pale)}
+.quiz-option.correct{border-color:var(--green-light);background:var(--green-pale);color:var(--green)}
+.quiz-option.wrong{border-color:#e53935;background:#ffebee;color:#c62828}
+.quiz-result{text-align:center;padding:2rem}
+.quiz-score{font-size:4rem;font-weight:900;color:var(--green)}
+
+/* RECIPES */
+.recipes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.recipe-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:.2s}
+.recipe-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.recipe-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:4rem}
+.recipe-body{padding:1rem}
+.recipe-body h3{margin-bottom:.5rem}
+.recipe-meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+.recipe-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.recipe-modal-card{background:#fff;border-radius:var(--radius);max-width:560px;width:100%;max-height:90vh;overflow-y:auto;padding:2rem}
+
+/* CHALLENGES */
+.challenge-card{background:#fff;border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);margin-bottom:1rem}
+.challenge-card .deadline{font-size:.85rem;color:var(--orange);font-weight:600}
+.challenge-done{opacity:.6;text-decoration:none}
+
+/* TRAILS */
+.trail-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:1rem}
+.trail-header{padding:1.25rem;cursor:pointer;display:flex;align-items:center;gap:1rem}
+.trail-header .icon{font-size:2rem}
+.trail-modules{padding:0 1.25rem 1.25rem;display:flex;flex-direction:column;gap:.75rem}
+.module-item{padding:.9rem 1rem;border-radius:var(--radius-sm);border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:.75rem;transition:.2s}
+.module-item:hover{border-color:var(--green-light);background:var(--green-pale)}
+.module-item.done{border-color:var(--green-light);background:var(--green-pale)}
+.module-item .check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem}
+.module-item.done .check{background:var(--green-light);border-color:var(--green-light);color:#fff}
+.module-detail{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);margin-top:1rem;line-height:1.7}
+
+/* ACHIEVEMENTS */
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1rem}
+.badge-card{background:#fff;border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow)}
+.badge-card .icon{font-size:2.5rem;margin-bottom:.5rem}
+.badge-card.locked{opacity:.35;filter:grayscale(1)}
+.badge-card h4{font-size:.85rem;font-weight:700}
+.badge-card p{font-size:.75rem;color:var(--muted);margin-top:.2rem}
+
+/* PRO PORTAL */
+.pro-banner{background:linear-gradient(135deg,var(--blue-light),var(--purple));color:#fff;border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem}
+.pro-banner h1{margin-bottom:.25rem}
+.code-box{background:rgba(255,255,255,.2);border-radius:var(--radius-sm);padding:.5rem 1rem;display:inline-block;font-size:1.5rem;font-weight:900;letter-spacing:.15em;cursor:pointer;margin-top:.5rem}
+.code-box:hover{background:rgba(255,255,255,.3)}
+.group-card{background:#fff;border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);margin-bottom:1rem}
+.member-list{display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem}
+.member-item{display:flex;align-items:center;gap:.75rem;padding:.5rem .75rem;background:var(--bg);border-radius:var(--radius-sm)}
+.member-item .av{width:30px;height:30px;border-radius:50%;background:var(--green-light);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem}
+.indicator-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem}
+.indicator-card{background:#fff;border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);text-align:center}
+.indicator-card .val{font-size:2.2rem;font-weight:900;color:var(--blue-light)}
+.indicator-card .lbl{font-size:.8rem;color:var(--muted);font-weight:600;margin-top:.2rem}
+.challenge-row{display:flex;align-items:center;justify-content:space-between;padding:1rem;background:#fff;border-radius:var(--radius-sm);box-shadow:var(--shadow);margin-bottom:.75rem}
+.library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.library-card{background:#fff;border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.library-card .lc-icon{font-size:2rem;margin-bottom:.5rem}
+.notes-list{display:flex;flex-direction:column;gap:.75rem}
+.note-item{background:#fff;border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--shadow);border-left:4px solid var(--blue-light)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-card{background:#fff;border-radius:var(--radius);padding:2rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--muted);line-height:1}
+
+/* MODULE READER */
+.module-reader{background:#fff;border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow);max-width:700px;margin:0 auto;line-height:1.75;font-size:1.05rem}
+.module-reader h2{color:var(--green);margin-bottom:1rem}
+.module-reader .tip{background:var(--orange-pale);border-left:4px solid var(--orange-light);padding:1rem;border-radius:var(--radius-sm);margin:1rem 0}
+.module-reader .fact{background:var(--green-pale);border-left:4px solid var(--green-light);padding:1rem;border-radius:var(--radius-sm);margin:1rem 0}
+.module-reader ul{padding-left:1.5rem;margin:.5rem 0}
+.module-reader ul li{margin:.3rem 0}
+
+/* PROFILE */
+.profile-page{max-width:560px;margin:0 auto}
+.profile-avatar-big{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--green-light),var(--orange-light));color:#fff;font-size:2rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.level-bar{margin-top:.5rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#333;color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);z-index:999;font-size:.95rem;animation:slideup .3s ease}
+.toast.success{background:var(--green)}
+.toast.error{background:#e53935}
+@keyframes slideup{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+@media(max-width:700px){
+  .sidebar{display:none}
+  .form-row{grid-template-columns:1fr}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .role-cards{flex-direction:column;align-items:center}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .content{padding:1rem}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// =========================================================
+//  DATABASE (Supabase relacional + cache em memória)
+// =========================================================
+const SUPABASE_URL='https://jnwmzfnegvgwhvlufbpi.supabase.co';
+const SUPABASE_KEY='sb_publishable_YZHNdfWgltQ3Cxkw2l0KXw_CUIUASXU';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const _cache={session:null};
+
+function mapProfile(r){
+  return{id:r.id,name:r.name,email:r.email,role:r.role,age:r.age,activity:r.activity,institution:r.institution,groupId:r.group_id,points:r.points||0,badges:r.badges||[],createdAt:r.created_at};
+}
+function mapGroup(r){
+  return{id:r.id,name:r.name,desc:r.description||'',code:r.code,ownerId:r.owner_id,createdAt:r.created_at};
+}
+function mapChallenge(r){
+  return{id:r.id,title:r.title,description:r.description,groupId:r.group_id,dueDate:r.due_date,materials:r.materials||[],ownerId:r.owner_id,createdAt:r.created_at};
+}
+function mapCompletion(r){
+  return{id:r.id,challengeId:r.challenge_id,userId:r.user_id,completedAt:r.completed_at};
+}
+function mapProgress(r){
+  return{completedModules:r.completed_modules||[],completedTrails:r.completed_trails||[],recipesViewed:r.recipes_viewed||0,totalCorrect:r.total_correct||0,quizzesDone:r.quizzes_done||0,challengesDone:r.challenges_done||0};
+}
+function mapLibrary(r){
+  return{id:r.id,title:r.title,type:r.type,desc:r.description||'',link:r.link||'',createdAt:r.created_at};
+}
+function mapNote(r){
+  return{id:r.id,title:r.title,content:r.content,groupId:r.group_id||'',createdAt:r.created_at};
+}
+function profileRow(u){
+  return{id:u.id,name:u.name,email:u.email,role:u.role,age:u.age??null,activity:u.activity??null,institution:u.institution??null,group_id:u.groupId??null,points:u.points??0,badges:u.badges??[],created_at:u.createdAt||new Date().toISOString()};
+}
+function groupRow(g){
+  return{id:g.id,name:g.name,description:g.desc||'',code:g.code,owner_id:g.ownerId,created_at:g.createdAt||new Date().toISOString()};
+}
+function challengeRow(c){
+  return{id:c.id,title:c.title,description:c.description,group_id:c.groupId,due_date:c.dueDate,materials:c.materials||[],owner_id:c.ownerId,created_at:c.createdAt||new Date().toISOString()};
+}
+function completionRow(c){
+  return{id:c.id,challenge_id:c.challengeId,user_id:c.userId,completed_at:c.completedAt||new Date().toISOString()};
+}
+function progressRow(uid,p){
+  return{user_id:uid,completed_modules:p.completedModules||[],completed_trails:p.completedTrails||[],recipes_viewed:p.recipesViewed||0,total_correct:p.totalCorrect||0,quizzes_done:p.quizzesDone||0,challenges_done:p.challengesDone||0};
+}
+function libraryRow(uid,item){
+  return{id:item.id,owner_id:uid,title:item.title,type:item.type||'Texto',description:item.desc||'',link:item.link||'',created_at:item.createdAt||new Date().toISOString()};
+}
+function noteRow(uid,n){
+  return{id:n.id,owner_id:uid,title:n.title,content:n.content,group_id:n.groupId||null,created_at:n.createdAt||new Date().toISOString()};
+}
+
+const DB = {
+  _clear(){
+    _cache.session=null;
+    _cache.users=[];
+    _cache.groups=[];
+    _cache.challenges=[];
+    _cache.completions=[];
+    Object.keys(_cache).forEach(k=>{
+      if(k.startsWith('progress_')||k.startsWith('library_')||k.startsWith('notes_'))delete _cache[k];
+    });
+  },
+  get(k){
+    if(k==='session')return _cache.session;
+    return _cache[k]??null;
+  },
+  set(k,v){
+    if(k==='session'){_cache.session=v;return;}
+    _cache[k]=v;
+    this._persist(k,v);
+  },
+  list(k){return this.get(k)||[]},
+  add(k,item){
+    const l=this.list(k);l.push(item);_cache[k]=l;
+    this._insert(k,item);
+    return item;
+  },
+  update(k,id,patch){
+    const l=this.list(k);
+    const i=l.findIndex(x=>x.id===id);
+    if(i>-1){l[i]={...l[i],...patch};_cache[k]=l;this._updateRow(k,l[i]);}
+  },
+  remove(k,id){
+    _cache[k]=this.list(k).filter(x=>x.id!==id);
+    this._deleteRow(k,id);
+  },
+  currentUser(){return _cache.session},
+  login(u){_cache.session=u},
+  async logout(){this._clear();await supabaseClient.auth.signOut()},
+  uid(){return crypto.randomUUID?crypto.randomUUID():'id_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)},
+  async lookupGroupByCode(code){
+    const {data,error}=await supabaseClient.rpc('lookup_group_by_code',{p_code:code});
+    if(error||!data?.length)return null;
+    return{id:data[0].id,name:data[0].name,code:data[0].code};
+  },
+  async init(){
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(session?.user)await this.loadRemote();
+    else this._clear();
+    if(session?.user){
+      const profile=this.list('users').find(u=>u.id===session.user.id);
+      if(profile)this.login(profile);
+    }
+  },
+  async loadRemote(){
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(!session?.user){this._clear();return;}
+    const uid=session.user.id;
+    this._clear();
+    const {data:me,error:meErr}=await supabaseClient.from('profiles').select('*').eq('id',uid).maybeSingle();
+    if(meErr||!me)return;
+    const users=[mapProfile(me)];
+    _cache.groups=[];
+    _cache.challenges=[];
+    _cache.completions=[];
+    if(me.role==='pro'){
+      const {data:groups}=await supabaseClient.from('groups').select('*').eq('owner_id',uid);
+      _cache.groups=(groups||[]).map(mapGroup);
+      const groupIds=_cache.groups.map(g=>g.id);
+      if(groupIds.length){
+        const {data:kids}=await supabaseClient.from('profiles').select('*').eq('role','kid').in('group_id',groupIds);
+        users.push(...(kids||[]).map(mapProfile));
+        const {data:chals}=await supabaseClient.from('challenges').select('*').in('group_id',groupIds);
+        _cache.challenges=(chals||[]).map(mapChallenge);
+        const kidIds=(kids||[]).map(k=>k.id);
+        if(kidIds.length){
+          const {data:comps}=await supabaseClient.from('completions').select('*').in('user_id',kidIds);
+          _cache.completions=(comps||[]).map(mapCompletion);
+          for(const kid of kids||[])await this._loadProgress(kid.id);
+        }
+      }
+      await this._loadLibrary(uid);
+      await this._loadNotes(uid);
+    }else{
+      if(me.group_id){
+        const {data:group}=await supabaseClient.from('groups').select('*').eq('id',me.group_id).maybeSingle();
+        if(group)_cache.groups=[mapGroup(group)];
+        const {data:chals}=await supabaseClient.from('challenges').select('*').eq('group_id',me.group_id);
+        _cache.challenges=(chals||[]).map(mapChallenge);
+      }
+      const {data:comps}=await supabaseClient.from('completions').select('*').eq('user_id',uid);
+      _cache.completions=(comps||[]).map(mapCompletion);
+      await this._loadProgress(uid);
+    }
+    _cache.users=users;
+  },
+  async _loadProgress(uid){
+    const {data}=await supabaseClient.from('progress').select('*').eq('user_id',uid).maybeSingle();
+    _cache['progress_'+uid]=data?mapProgress(data):{completedModules:[],completedTrails:[],recipesViewed:0,totalCorrect:0,quizzesDone:0,challengesDone:0};
+  },
+  async _loadLibrary(uid){
+    const {data}=await supabaseClient.from('library_items').select('*').eq('owner_id',uid).order('created_at',{ascending:false});
+    _cache['library_'+uid]=(data||[]).map(mapLibrary);
+  },
+  async _loadNotes(uid){
+    const {data}=await supabaseClient.from('notes').select('*').eq('owner_id',uid).order('created_at',{ascending:false});
+    _cache['notes_'+uid]=(data||[]).map(mapNote);
+  },
+  async _insert(k,item){
+    let error;
+    if(k==='users')({error}=await supabaseClient.from('profiles').insert(profileRow(item)));
+    else if(k==='groups')({error}=await supabaseClient.from('groups').insert(groupRow(item)));
+    else if(k==='challenges')({error}=await supabaseClient.from('challenges').insert(challengeRow(item)));
+    else if(k==='completions')({error}=await supabaseClient.from('completions').insert(completionRow(item)));
+    if(error)console.warn('Falha ao inserir',k,error.message);
+  },
+  async _updateRow(k,item){
+    let error;
+    if(k==='users')({error}=await supabaseClient.from('profiles').update(profileRow(item)).eq('id',item.id));
+    else if(k==='groups')({error}=await supabaseClient.from('groups').update(groupRow(item)).eq('id',item.id));
+    else if(k==='challenges')({error}=await supabaseClient.from('challenges').update(challengeRow(item)).eq('id',item.id));
+    if(error)console.warn('Falha ao atualizar',k,error.message);
+  },
+  async _deleteRow(k,id){
+    let error;
+    if(k==='groups')({error}=await supabaseClient.from('groups').delete().eq('id',id));
+    else if(k==='challenges')({error}=await supabaseClient.from('challenges').delete().eq('id',id));
+    else if(k==='completions')({error}=await supabaseClient.from('completions').delete().eq('id',id));
+    if(error)console.warn('Falha ao excluir',k,error.message);
+  },
+  async _persist(k,v){
+    if(k.startsWith('progress_')){
+      const uid=k.slice(9);
+      const {error}=await supabaseClient.from('progress').upsert(progressRow(uid,v));
+      if(error)console.warn('Falha ao salvar progresso',error.message);
+    }else if(k.startsWith('library_')){
+      const uid=k.slice(8);
+      const {data:existing}=await supabaseClient.from('library_items').select('id').eq('owner_id',uid);
+      const ids=new Set((v||[]).map(i=>i.id));
+      const toDelete=(existing||[]).filter(r=>!ids.has(r.id)).map(r=>r.id);
+      if(toDelete.length)await supabaseClient.from('library_items').delete().in('id',toDelete);
+      if(v?.length){
+        const {error}=await supabaseClient.from('library_items').upsert(v.map(i=>libraryRow(uid,i)));
+        if(error)console.warn('Falha ao salvar biblioteca',error.message);
+      }
+    }else if(k.startsWith('notes_')){
+      const uid=k.slice(6);
+      const {data:existing}=await supabaseClient.from('notes').select('id').eq('owner_id',uid);
+      const ids=new Set((v||[]).map(n=>n.id));
+      const toDelete=(existing||[]).filter(r=>!ids.has(r.id)).map(r=>r.id);
+      if(toDelete.length)await supabaseClient.from('notes').delete().in('id',toDelete);
+      if(v?.length){
+        const {error}=await supabaseClient.from('notes').upsert(v.map(n=>noteRow(uid,n)));
+        if(error)console.warn('Falha ao salvar observações',error.message);
+      }
+    }
+  }
+};
+
+// =========================================================
+//  SEED DATA
+// =========================================================
+const RECIPES=[
+  {id:'r1',emoji:'🥤',name:'Vitamina de Banana com Aveia',time:5,diff:'Fácil',cat:'Bebidas',
+   ingr:['1 banana madura','200ml de leite','2 colheres de aveia','1 colher de mel','gelo (opcional)'],
+   steps:['Descasque a banana e corte em pedaços.','Coloque todos os ingredientes no liquidificador.','Bata por 1 minuto até ficar cremoso.','Sirva gelado. Bom apetite!'],
+   tip:'A aveia é rica em fibras e ajuda a ter energia por mais tempo!',color:'#fff8e1'},
+  {id:'r2',emoji:'🥗',name:'Salada Colorida com Cenoura',time:10,diff:'Fácil',cat:'Saladas',
+   ingr:['1 cenoura ralada','½ pepino fatiado','1 tomate','alface a gosto','suco de 1 limão','sal e azeite'],
+   steps:['Lave bem todos os legumes.','Ralos a cenoura e fatie o pepino e tomate.','Rasgue a alface em pedaços.','Misture tudo numa tigela.','Tempere com limão, sal e azeite.'],
+   tip:'Quanto mais cores no prato, mais vitaminas você está consumindo!',color:'#e8f5e9'},
+  {id:'r3',emoji:'🥪',name:'Sanduíche Integral Nutritivo',time:8,diff:'Fácil',cat:'Lanches',
+   ingr:['2 fatias de pão integral','1 fatia de frango desfiado ou atum','alface','1 fatia de tomate','cream cheese light'],
+   steps:['Passe cream cheese em uma fatia de pão.','Coloque alface, frango/atum e tomate.','Tampe com a outra fatia.','Corte na diagonal e sirva!'],
+   tip:'O pão integral tem mais fibras que o pão branco e mantém você satisfeito por mais tempo.',color:'#fff3e0'},
+  {id:'r4',emoji:'🍓',name:'Iogurte com Granola e Frutas',time:5,diff:'Fácil',cat:'Café da Manhã',
+   ingr:['200ml de iogurte natural','3 colheres de granola sem açúcar','½ banana fatiada','5 morangos','1 colher de mel'],
+   steps:['Coloque o iogurte num pote ou copo.','Adicione a granola por cima.','Corte as frutas e coloque sobre a granola.','Regue com mel. Pronto!'],
+   tip:'Iogurte natural tem probióticos que ajudam seu intestino a funcionar melhor.',color:'#fce4ec'},
+  {id:'r5',emoji:'🍳',name:'Omelete de Legumes',time:12,diff:'Médio',cat:'Refeições',
+   ingr:['2 ovos','¼ de cebola picada','½ tomate picado','2 colheres de espinafre','sal e pimenta','azeite'],
+   steps:['Bata os ovos com sal e pimenta.','Refogue a cebola no azeite por 2 min.','Adicione tomate e espinafre, mexa.','Despeje os ovos e aguarde firmar.','Vire delicadamente e sirva.'],
+   tip:'Os ovos são uma das melhores fontes de proteína! Eles constroem músculos.',color:'#f3e5f5'},
+  {id:'r6',emoji:'🥬',name:'Suco Verde Energizante',time:5,diff:'Fácil',cat:'Bebidas',
+   ingr:['1 folha de couve','1 limão (suco)','1 pepino pequeno','1 maçã verde','200ml de água de coco','gengibre (opcional)'],
+   steps:['Lave bem todos os ingredientes.','Corte o pepino e a maçã em pedaços.','Coloque tudo no liquidificador.','Bata bem e coe se preferir.','Beba imediatamente para aproveitar as vitaminas!'],
+   tip:'A couve é rica em ferro e vitamina K. Ótima para deixar os ossos fortes!',color:'#e8f5e9'}
+];
+
+const QUIZ=[
+  {q:'Qual alimento tem mais vitamina C?',opts:['🍊 Laranja','🍌 Banana','🍎 Maçã','🍞 Pão'],c:0,exp:'A laranja é muito rica em vitamina C, que fortalece nossa imunidade!'},
+  {q:'Quantos copos de água devemos beber por dia?',opts:['2 copos','4 copos','6 a 8 copos','12 copos'],c:2,exp:'O ideal é beber de 6 a 8 copos de água por dia para manter o corpo hidratado.'},
+  {q:'O leite e o queijo são ricos em qual mineral?',opts:['Ferro','Cálcio','Vitamina C','Zinco'],c:1,exp:'O cálcio deixa seus ossos e dentes fortes! Leite e queijo são ótimas fontes.'},
+  {q:'Qual cor de fruta ou vegetal ajuda nossa visão?',opts:['Branco','Roxo','🟠 Laranja/Amarelo','Verde'],c:2,exp:'Cenoura, abóbora e mamão têm betacaroteno que protege os olhos!'},
+  {q:'Para que servem as proteínas no nosso corpo?',opts:['Dar energia rápida','Construir e reparar músculos','Deixar o sangue doce','Hidratar a pele'],c:1,exp:'Proteínas são como tijolos do corpo — constroem músculos, pele, cabelo e unhas!'},
+  {q:'Qual alimento é uma boa fonte de proteína vegetal?',opts:['Arroz branco','Batata frita','🫘 Feijão','Macarrão'],c:2,exp:'Feijão, lentilha e grão-de-bico têm muita proteína e fibra!'},
+  {q:'O que torna o café da manhã importante?',opts:['Porque é obrigatório na escola','Fornece energia para o dia todo','É a menor refeição','Nenhuma razão especial'],c:1,exp:'Após a noite sem comer, o café da manhã reabastece sua energia para o dia!'},
+  {q:'Qual lanche é mais saudável?',opts:['Salgadinho de pacote','🍌 Fruta com iogurte','Bolo recheado','Refrigerante'],c:1,exp:'Frutas e iogurte têm vitaminas, fibras e proteínas. São ótimos para o lanche!'},
+  {q:'Qual fruta tem muito potássio, que é bom para os músculos?',opts:['🍓 Morango','🍇 Uva','🍌 Banana','🍍 Abacaxi'],c:2,exp:'A banana é rica em potássio, que ajuda os músculos a funcionar bem e previne cãibras!'},
+  {q:'O que são alimentos ultraprocessados?',opts:['Alimentos frescos do mercado','Alimentos com muitos aditivos artificiais','Frutas congeladas','Verduras cozidas'],c:1,exp:'Ultraprocessados têm muito açúcar, sal, gordura e aditivos. Consuma com moderação!'},
+  {q:'Qual vitamina obtemos do sol?',opts:['Vitamina A','Vitamina B12','Vitamina C','Vitamina D'],c:3,exp:'A vitamina D é produzida pela pele quando tomamos sol! Ela ajuda a absorver cálcio.'},
+  {q:'Para que serve a fibra alimentar?',opts:['Dar energia imediata','Ajudar o intestino a funcionar','Construir músculos','Dar cor à pele'],c:1,exp:'Fibras ajudam o intestino a funcionar bem e nos deixam satisfeitos por mais tempo.'},
+  {q:'Qual refeição você não deve pular?',opts:['Almoço','Jantar','Café da manhã','Nenhuma, pode pular todas'],c:2,exp:'Nenhuma refeição deve ser pulada, mas o café da manhã é especialmente importante!'},
+  {q:'O ovo é rico em qual nutriente importante?',opts:['Fibra','Proteína','Vitamina C','Potássio'],c:1,exp:'O ovo é completo em proteínas e vitaminas essenciais. Um superalimento!'},
+  {q:'Quantas porções de frutas devemos comer por dia?',opts:['1 porção','2-3 porções','5-7 porções','Quanto quiser'],c:1,exp:'Especialistas recomendam 2 a 3 porções de frutas por dia para uma alimentação equilibrada!'}
+];
+
+const TRAILS=[
+  {id:'t1',icon:'🍽️',name:'O Prato Colorido',desc:'Aprenda sobre os grupos alimentares',color:'#e8f5e9',
+   modules:[
+    {id:'m1',title:'Por que precisamos comer?',
+     content:`<h2>Por que precisamos comer? 🤔</h2>
+     <p>Comer é uma das coisas mais importantes que fazemos! Mas você sabe <strong>por que</strong> precisamos nos alimentar?</p>
+     <p>Nosso corpo é como um carro: precisa de <strong>combustível</strong> para funcionar. Esse combustível vem da comida!</p>
+     <div class="fact">💡 <strong>Fato:</strong> Nosso cérebro sozinho consome cerca de 20% de toda a energia que ingerimos!</div>
+     <p>Os alimentos nos fornecem:</p>
+     <ul><li><strong>Energia</strong> para brincar, estudar e crescer</li><li><strong>Nutrientes</strong> para construir músculos e ossos</li><li><strong>Vitaminas</strong> que fortalecem nossa imunidade</li><li><strong>Água</strong> que mantém o corpo funcionando</li></ul>
+     <div class="tip">🌟 <strong>Dica:</strong> Quanto mais variada sua alimentação, mais nutrientes seu corpo recebe!</div>`},
+    {id:'m2',title:'Os grupos alimentares',
+     content:`<h2>Os Grupos Alimentares 🍎🥦🥩</h2>
+     <p>Os alimentos são divididos em grupos conforme os nutrientes que fornecem:</p>
+     <ul>
+       <li>🌾 <strong>Carboidratos</strong> — arroz, pão, macarrão, batata → energia!</li>
+       <li>🥩 <strong>Proteínas</strong> — carnes, ovos, feijão, queijo → músculos!</li>
+       <li>🥛 <strong>Laticínios</strong> — leite, iogurte, queijo → ossos fortes!</li>
+       <li>🥦 <strong>Vegetais</strong> — brócolis, cenoura, espinafre → vitaminas!</li>
+       <li>🍎 <strong>Frutas</strong> — maçã, banana, laranja → vitaminas e fibras!</li>
+       <li>🫒 <strong>Gorduras boas</strong> — azeite, abacate, castanhas → cérebro!</li>
+     </ul>
+     <div class="fact">🌈 O segredo é ter o <strong>prato colorido</strong>: quanto mais cores, mais nutrientes diferentes!</div>`},
+    {id:'m3',title:'Monte seu prato ideal',
+     content:`<h2>Monte Seu Prato Ideal 🍽️</h2>
+     <p>Imagine dividir seu prato em partes:</p>
+     <ul>
+       <li>🍀 <strong>Metade</strong> do prato: vegetais e frutas (coloridos!)</li>
+       <li>🌾 <strong>¼ do prato</strong>: carboidratos (arroz, macarrão, pão)</li>
+       <li>🥩 <strong>¼ do prato</strong>: proteínas (carne, ovos, feijão)</li>
+     </ul>
+     <div class="tip">✅ Esse modelo se chama "Método do Prato" e é usado no mundo inteiro para ensinar alimentação saudável!</div>
+     <p>Lembre-se: não existe alimento "proibido", o segredo está no <strong>equilíbrio</strong> e na <strong>variedade</strong>!</p>
+     <div class="fact">🏆 Desafio: tente ter pelo menos 3 cores diferentes no seu prato no almoço de hoje!</div>`}
+   ]},
+  {id:'t2',icon:'💧',name:'Hidratação é Vida',desc:'Descubra a importância da água',color:'#e3f2fd',
+   modules:[
+    {id:'m4',title:'O corpo é feito de água!',
+     content:`<h2>Nosso Corpo é Feito de Água! 💧</h2>
+     <p>Sabia que <strong>60-70%</strong> do seu corpo é água? Isso mesmo!</p>
+     <p>A água está em todo lugar: no sangue, nos músculos, nos órgãos e até nos ossos!</p>
+     <ul>
+       <li>🧠 O cérebro tem 75% de água</li>
+       <li>❤️ O sangue tem 83% de água</li>
+       <li>💪 Os músculos têm 75% de água</li>
+     </ul>
+     <div class="fact">😰 Quando sentimos sede, já estamos levemente desidratados. Não espere a sede para beber água!</div>`},
+    {id:'m5',title:'Quanto beber por dia?',
+     content:`<h2>Quanto Beber por Dia? 🥤</h2>
+     <p>A recomendação geral é de <strong>6 a 8 copos</strong> de água por dia.</p>
+     <p>Mas isso pode variar! Você precisa de mais água quando:</p>
+     <ul>
+       <li>🏃 Pratica esportes ou brinca muito</li>
+       <li>☀️ Está em dias quentes</li>
+       <li>🤒 Está doente com febre</li>
+     </ul>
+     <div class="tip">💡 Truque: deixe uma garrafinha de água sempre do seu lado. Vai lembrar de beber!</div>
+     <p>Além da água pura, você pode se hidratar com:</p>
+     <ul>
+       <li>🍎 Frutas (melancia, laranja têm muita água!)</li>
+       <li>🥒 Legumes (pepino, abobrinha)</li>
+       <li>🍵 Chás sem açúcar</li>
+       <li>🥛 Leite</li>
+     </ul>`},
+    {id:'m6',title:'Refrigerante não hidrata!',
+     content:`<h2>Refrigerante Não Hidrata! 🚫🥤</h2>
+     <p>Muita gente acha que refrigerante é igual a água. <strong>Não é!</strong></p>
+     <p>O refrigerante tem:</p>
+     <ul>
+       <li>🍬 Muito açúcar (até 10 colheres por lata!)</li>
+       <li>⚗️ Corantes e conservantes artificiais</li>
+       <li>🫧 Gás que pode causar desconforto</li>
+     </ul>
+     <div class="fact">💡 O açúcar do refrigerante pode até aumentar a sensação de sede em vez de diminuir!</div>
+     <p>Alternativas saborosas para substituir o refrigerante:</p>
+     <ul>
+       <li>🍋 Água com limão e hortelã</li>
+       <li>🍓 Suco de fruta natural (sem açúcar)</li>
+       <li>🥥 Água de coco</li>
+       <li>🍵 Limonada</li>
+     </ul>
+     <div class="tip">✅ Reduzir o refrigerante é um dos passos mais importantes para uma alimentação mais saudável!</div>`}
+   ]},
+  {id:'t3',icon:'⚡',name:'Energia para Crescer',desc:'Entenda proteínas e carboidratos',color:'#fff3e0',
+   modules:[
+    {id:'m7',title:'Carboidratos: o combustível',
+     content:`<h2>Carboidratos: o Combustível! ⚡</h2>
+     <p>Os carboidratos são a <strong>principal fonte de energia</strong> do nosso corpo e do cérebro.</p>
+     <p>Eles são encontrados em:</p>
+     <ul>
+       <li>🍚 Arroz, pão, macarrão, batata</li>
+       <li>🌽 Milho, mandioca, aveia</li>
+       <li>🍌 Frutas (também têm carboidratos naturais!)</li>
+     </ul>
+     <div class="fact">🏃 Atletas comem mais carboidratos antes de competir exatamente porque eles dão energia rápida!</div>
+     <div class="tip">💡 Prefira os integrais: pão integral, arroz integral. Eles têm mais fibras e dão energia por mais tempo!</div>`},
+    {id:'m8',title:'Proteínas: tijolos do corpo',
+     content:`<h2>Proteínas: os Tijolos do Corpo! 🧱</h2>
+     <p>As proteínas constroem e reparam tudo no seu corpo: músculos, pele, cabelo, unhas e órgãos!</p>
+     <p>Fontes de proteína animal:</p>
+     <ul>
+       <li>🥩 Carnes (frango, peixe, boi)</li>
+       <li>🥚 Ovos</li>
+       <li>🥛 Leite, queijo, iogurte</li>
+     </ul>
+     <p>Fontes de proteína vegetal:</p>
+     <ul>
+       <li>🫘 Feijão, lentilha, grão-de-bico</li>
+       <li>🥜 Amendoim, castanhas</li>
+       <li>🫛 Ervilha, soja</li>
+     </ul>
+     <div class="fact">💪 Quando você pratica esportes, seus músculos precisam de proteína para crescer e se recuperar!</div>`},
+    {id:'m9',title:'Vitaminas e minerais',
+     content:`<h2>Vitaminas e Minerais: os Superheróis! 🦸</h2>
+     <p>Vitaminas e minerais são necessários em pequenas quantidades, mas são <strong>fundamentais</strong> para a saúde!</p>
+     <p>Principais vitaminas:</p>
+     <ul>
+       <li>🍊 <strong>Vitamina C</strong> (laranja, morango) → imunidade</li>
+       <li>☀️ <strong>Vitamina D</strong> (sol + leite) → ossos</li>
+       <li>🥕 <strong>Vitamina A</strong> (cenoura) → visão e pele</li>
+       <li>🥦 <strong>Vitamina K</strong> (couve) → coagulação do sangue</li>
+     </ul>
+     <p>Principais minerais:</p>
+     <ul>
+       <li>🦷 <strong>Cálcio</strong> (leite) → ossos e dentes</li>
+       <li>🩸 <strong>Ferro</strong> (feijão, carne) → sangue saudável</li>
+       <li>🍌 <strong>Potássio</strong> (banana) → músculos e coração</li>
+     </ul>
+     <div class="tip">🌈 A melhor forma de garantir todas as vitaminas é comendo uma grande variedade de alimentos coloridos!</div>`}
+   ]}
+];
+
+const BADGES_DEF=[
+  {id:'b1',icon:'🌱',name:'Primeiro Passo',desc:'Completou o cadastro'},
+  {id:'b2',icon:'🧠',name:'Cerebro Nutri',desc:'Acertou 5 perguntas no quiz'},
+  {id:'b3',icon:'⭐',name:'Quiz Star',desc:'Acertou 10 perguntas no quiz'},
+  {id:'b4',icon:'🏆',name:'Campeão do Quiz',desc:'Completou um quiz com nota máxima'},
+  {id:'b5',icon:'📖',name:'Leitor Ativo',desc:'Leu um módulo de trilha'},
+  {id:'b6',icon:'🎓',name:'Trilheiro',desc:'Completou uma trilha inteira'},
+  {id:'b7',icon:'🍳',name:'Chef Mirim',desc:'Visualizou 3 receitas'},
+  {id:'b8',icon:'💧',name:'Hidratado',desc:'Completou a trilha de hidratação'},
+  {id:'b9',icon:'🏅',name:'Desafiante',desc:'Completou um desafio semanal'},
+  {id:'b10',icon:'🚀',name:'Supernutri',desc:'100 pontos conquistados'}
+];
+
+// =========================================================
+//  HELPERS
+// =========================================================
+function toast(msg,type='success'){
+  const t=document.createElement('div');
+  t.className='toast '+type;t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+function $(id){return document.getElementById(id)}
+function render(html){$('app').innerHTML=html}
+function nav(page,data={}){App.go(page,data)}
+function genCode(){return Math.random().toString(36).slice(2,8).toUpperCase()}
+function fmtDate(d){if(!d)return '';return new Date(d).toLocaleDateString('pt-BR')}
+function daysDiff(d){const diff=(new Date(d)-new Date())/(1000*60*60*24);return Math.ceil(diff)}
+
+// =========================================================
+//  GAMIFICATION
+// =========================================================
+function addPoints(n){
+  const u=DB.currentUser();if(!u||u.role!=='kid')return;
+  u.points=(u.points||0)+n;
+  DB.login(u);DB.update('users',u.id,{points:u.points});
+  toast('+'+n+' pontos! 🌟');
+  checkBadges(u);
+}
+function checkBadges(u){
+  const prog=DB.get('progress_'+u.id)||{};
+  const badges=u.badges||[];
+  const totalQ=(prog.totalCorrect||0);
+  const recipes=prog.recipesViewed||0;
+  const doneMods=(prog.completedModules||[]).length;
+  const trailsDone=(prog.completedTrails||[]).length;
+  const challengesDone=(prog.challengesDone||0);
+  const newBadges=[];
+  if(!badges.includes('b1'))newBadges.push('b1');
+  if(totalQ>=5&&!badges.includes('b2'))newBadges.push('b2');
+  if(totalQ>=10&&!badges.includes('b3'))newBadges.push('b3');
+  if(recipes>=3&&!badges.includes('b7'))newBadges.push('b7');
+  if(doneMods>=1&&!badges.includes('b5'))newBadges.push('b5');
+  if(trailsDone>=1&&!badges.includes('b6'))newBadges.push('b6');
+  if(trailsDone>=1&&(prog.completedTrails||[]).includes('t2')&&!badges.includes('b8'))newBadges.push('b8');
+  if(challengesDone>=1&&!badges.includes('b9'))newBadges.push('b9');
+  if((u.points||0)>=100&&!badges.includes('b10'))newBadges.push('b10');
+  if(newBadges.length){
+    const all=[...badges,...newBadges];
+    u.badges=all;DB.login(u);DB.update('users',u.id,{badges:all});
+    newBadges.forEach(b=>{const def=BADGES_DEF.find(x=>x.id===b);if(def)toast(def.icon+' Conquista: '+def.name,'success')});
+  }
+}
+function getProgress(uid){return DB.get('progress_'+uid)||{completedModules:[],completedTrails:[],recipesViewed:0,totalCorrect:0,quizzesDone:0,challengesDone:0}}
+function saveProgress(uid,patch){const p=getProgress(uid);DB.set('progress_'+uid,{...p,...patch})}
+
+// =========================================================
+//  ROUTER / APP
+// =========================================================
+const App={
+  page:'landing',data:{},
+  go(page,data={}){this.page=page;this.data=data;this.render()},
+  render(){
+    const u=DB.currentUser();
+    switch(this.page){
+      case 'landing': Views.landing();break;
+      case 'auth': Views.auth(this.data);break;
+      case 'kid-dashboard': Views.kidDashboard();break;
+      case 'kid-trails': Views.kidTrails();break;
+      case 'kid-module': Views.kidModule(this.data);break;
+      case 'kid-quiz': Views.kidQuiz();break;
+      case 'kid-recipes': Views.kidRecipes();break;
+      case 'kid-challenges': Views.kidChallenges();break;
+      case 'kid-profile': Views.kidProfile();break;
+      case 'pro-dashboard': Views.proDashboard();break;
+      case 'pro-groups': Views.proGroups();break;
+      case 'pro-challenges': Views.proChallenges();break;
+      case 'pro-library': Views.proLibrary();break;
+      case 'pro-notes': Views.proNotes();break;
+      case 'pro-profile': Views.proProfile();break;
+      default: Views.landing();
+    }
+  }
+};
+
+// =========================================================
+//  VIEWS
+// =========================================================
+const Views={
+
+// ---------- LANDING ----------
+landing(){
+  render(`
+  <div class="landing">
+    <div class="landing-logo">🥦</div>
+    <h1 class="landing-title">NutriKids</h1>
+    <p class="landing-sub">Aprenda sobre nutrição de um jeito divertido e saudável!</p>
+    <div class="role-cards">
+      <div class="role-card kid" onclick="nav('auth',{role:'kid',tab:'register'})">
+        <div class="icon">👧</div>
+        <h2 style="color:var(--orange)">Sou Criança ou<br>Adolescente</h2>
+        <p>Jogue, aprenda e descubra receitas incríveis!</p>
+        <button class="btn btn-secondary mt-2" style="width:100%">Entrar no App ▶</button>
+      </div>
+      <div class="role-card pro" onclick="nav('auth',{role:'pro',tab:'register'})">
+        <div class="icon">👩‍⚕️</div>
+        <h2 style="color:var(--blue)">Sou Profissional de<br>Nutrição</h2>
+        <p>Gerencie turmas, desafios e acompanhe o progresso.</p>
+        <button class="btn btn-blue mt-2" style="width:100%">Acessar Portal ▶</button>
+      </div>
+    </div>
+    <p class="landing-login">Já tem conta? <a onclick="nav('auth',{role:'kid',tab:'login'})">Entrar como criança</a> · <a onclick="nav('auth',{role:'pro',tab:'login'})">Entrar como profissional</a></p>
+  </div>`);
+},
+
+// ---------- AUTH ----------
+auth(d){
+  const role=d.role||'kid';
+  const isKid=role==='kid';
+  const color=isKid?'var(--orange-light)':'var(--blue-light)';
+  const icon=isKid?'👧':'👩‍⚕️';
+  const title=isKid?'Área da Criança':'Portal do Profissional';
+  let tab=d.tab||'login';
+
+  render(`
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="icon">${icon}</div>
+        <h2>${title}</h2>
+        <p class="text-muted mt-1" style="font-size:.9rem">${isKid?'Educação nutricional interativa':'Portal de gestão educativa'}</p>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab ${tab==='login'?'active':''}" onclick="Views.auth({role:'${role}',tab:'login'})">Entrar</button>
+        <button class="auth-tab ${tab==='register'?'active':''}" onclick="Views.auth({role:'${role}',tab:'register'})">Cadastrar</button>
+      </div>
+      <div id="auth-form">
+        ${tab==='login'?this._loginForm(role):this._registerForm(role)}
+      </div>
+      <hr class="divider">
+      <p class="text-center text-muted" style="font-size:.85rem">
+        <a onclick="nav('landing')" style="color:var(--green);cursor:pointer">← Voltar ao início</a>
+      </p>
+    </div>
+  </div>`);
+  App.page='auth';App.data=d;
+  document.getElementById('auth-form-submit').onclick=()=>this._handleAuth(role,tab);
+},
+_loginForm(role){
+  return `
+  <div id="auth-msg"></div>
+  <div class="form-group"><label>E-mail</label><input id="f-email" type="email" placeholder="seuemail@exemplo.com"></div>
+  <div class="form-group"><label>Senha</label><input id="f-pass" type="password" placeholder="••••••••"></div>
+  <button id="auth-form-submit" class="btn ${role==='kid'?'btn-secondary':'btn-blue'}" style="width:100%;justify-content:center">Entrar</button>`;
+},
+_registerForm(role){
+  const isKid=role==='kid';
+  return `
+  <div id="auth-msg"></div>
+  <div class="form-group"><label>Nome completo</label><input id="f-name" placeholder="Seu nome"></div>
+  <div class="form-row">
+    <div class="form-group"><label>E-mail</label><input id="f-email" type="email" placeholder="email@exemplo.com"></div>
+    <div class="form-group"><label>Senha</label><input id="f-pass" type="password" placeholder="••••••••"></div>
+  </div>
+  ${isKid?`
+  <div class="form-row">
+    <div class="form-group"><label>Idade</label><input id="f-age" type="number" min="5" max="18" placeholder="Ex: 12"></div>
+    <div class="form-group"><label>Atividade física</label>
+      <select id="f-activity"><option value="baixo">Pouco ativa</option><option value="medio">Moderada</option><option value="alto">Muito ativa</option></select>
+    </div>
+  </div>
+  <div class="form-group"><label>Código de turma (opcional)</label><input id="f-code" placeholder="Ex: ABC123"></div>`
+  :`<div class="form-group"><label>Instituição / Escola</label><input id="f-inst" placeholder="Nome da instituição"></div>`}
+  <button id="auth-form-submit" class="btn ${isKid?'btn-secondary':'btn-blue'}" style="width:100%;justify-content:center">Criar Conta</button>`;
+},
+async _handleAuth(role,tab){
+  const email=$('f-email')?.value.trim();
+  const pass=$('f-pass')?.value.trim();
+  const msgEl=$('auth-msg');
+  if(!email||!pass){msgEl.innerHTML='<div class="alert alert-error">Preencha e-mail e senha.</div>';return;}
+  const btn=$('auth-form-submit');
+  if(btn){btn.disabled=true;btn.textContent=tab==='login'?'Entrando...':'Criando conta...'}
+  if(tab==='login'){
+    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password:pass});
+    if(error){
+      msgEl.innerHTML='<div class="alert alert-error">E-mail ou senha incorretos.</div>';
+      if(btn){btn.disabled=false;btn.textContent='Entrar'}
+      return;
+    }
+    await DB.loadRemote();
+    let u=DB.list('users').find(x=>x.id===data.user.id);
+    const meta=data.user.user_metadata||{};
+    if(!u&&meta.role===role){
+      u={id:data.user.id,name:meta.name||email.split('@')[0],email:data.user.email||email,role,points:0,badges:[],createdAt:meta.createdAt||new Date().toISOString()};
+      if(role==='kid'){
+        u.age=meta.age||12;
+        u.activity=meta.activity||'medio';
+        if(meta.groupId)u.groupId=meta.groupId;
+      }else{
+        u.institution=meta.institution||'';
+      }
+      DB.add('users',u);
+      saveProgress(u.id,{});
+    }
+    if(!u||u.role!==role){
+      await DB.logout();
+      msgEl.innerHTML='<div class="alert alert-error">Esta conta não pertence a este tipo de acesso.</div>';
+      if(btn){btn.disabled=false;btn.textContent='Entrar'}
+      return;
+    }
+    DB.login(u);
+    role==='kid'?nav('kid-dashboard'):nav('pro-dashboard');
+  } else {
+    const name=$('f-name')?.value.trim();
+    if(!name){
+      msgEl.innerHTML='<div class="alert alert-error">Informe seu nome.</div>';
+      if(btn){btn.disabled=false;btn.textContent='Criar Conta'}
+      return;
+    }
+    const profile={name,email,role,points:0,badges:[],createdAt:new Date().toISOString()};
+    let linkedGroup=null;
+    if(role==='kid'){
+      profile.age=parseInt($('f-age')?.value)||12;
+      profile.activity=$('f-activity')?.value||'medio';
+      const code=$('f-code')?.value.trim().toUpperCase();
+      if(code){
+        linkedGroup=await DB.lookupGroupByCode(code);
+        if(linkedGroup){profile.groupId=linkedGroup.id;}
+        else{
+          msgEl.innerHTML='<div class="alert alert-error">Código de turma inválido.</div>';
+          if(btn){btn.disabled=false;btn.textContent='Criar Conta'}
+          return;
+        }
+      }
+    } else {
+      profile.institution=$('f-inst')?.value.trim()||'';
+    }
+    const {data,error}=await supabaseClient.auth.signUp({
+      email,
+      password:pass,
+      options:{
+        data:profile,
+        emailRedirectTo:window.location.origin
+      }
+    });
+    if(error){
+      msgEl.innerHTML='<div class="alert alert-error">'+error.message+'</div>';
+      if(btn){btn.disabled=false;btn.textContent='Criar Conta'}
+      return;
+    }
+    if(!data.session){
+      msgEl.innerHTML='<div class="alert alert-info">Conta criada. Confirme seu e-mail antes de entrar.</div>';
+      if(btn){btn.disabled=false;btn.textContent='Criar Conta'}
+      return;
+    }
+    const u={id:data.user.id,...profile};
+    DB.add('users',u);DB.login(u);
+    _cache.users=[u];
+    if(u.groupId&&linkedGroup){
+      _cache.groups=[{id:linkedGroup.id,name:linkedGroup.name,code:linkedGroup.code,desc:'',ownerId:'',createdAt:new Date().toISOString()}];
+      toast('Turma vinculada: '+linkedGroup.name+'!');
+    }
+    saveProgress(u.id,{});
+    checkBadges(u);
+    role==='kid'?nav('kid-dashboard'):nav('pro-dashboard');
+  }
+},
+
+// ---------- KID LAYOUT ----------
+_kidNav(active){
+  const u=DB.currentUser();
+  return `
+  <div class="navbar">
+    <div class="navbar-brand" onclick="nav('kid-dashboard')"><span>🥦</span> NutriKids</div>
+    <div class="navbar-links">
+      <button class="nav-link ${active==='dash'?'active':''}" onclick="nav('kid-dashboard')">🏠 Início</button>
+      <button class="nav-link ${active==='quiz'?'active':''}" onclick="nav('kid-quiz')">🎮 Quiz</button>
+      <button class="nav-link ${active==='recipes'?'active':''}" onclick="nav('kid-recipes')">🍽️ Receitas</button>
+      <button class="nav-link ${active==='trails'?'active':''}" onclick="nav('kid-trails')">📚 Trilhas</button>
+      <button class="nav-link ${active==='challenges'?'active':''}" onclick="nav('kid-challenges')">🏆 Desafios</button>
+    </div>
+    <div class="user-menu">
+      <span style="font-weight:700;color:var(--orange)">⭐ ${u.points||0}</span>
+      <div class="avatar" onclick="nav('kid-profile')" style="cursor:pointer">${u.name[0].toUpperCase()}</div>
+      <button class="btn btn-outline btn-sm" onclick="DB.logout();nav('landing')">Sair</button>
+    </div>
+  </div>`;
+},
+
+// ---------- KID DASHBOARD ----------
+kidDashboard(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='kid'){nav('landing');return;}
+  const prog=getProgress(u.id);
+  const challenges=DB.list('challenges').filter(c=>!c.groupId||c.groupId===u.groupId);
+  const done=DB.list('completions').filter(x=>x.userId===u.id).map(x=>x.challengeId);
+  const pending=challenges.filter(c=>!done.includes(c.id)).slice(0,2);
+  const level=Math.floor((u.points||0)/50)+1;
+  const nextPts=level*50;
+  const pct=Math.min(100,Math.round(((u.points||0)%50)/50*100));
+
+  render(this._kidNav('dash')+`
+  <div style="padding:1.5rem;max-width:900px;margin:0 auto">
+    <div class="welcome-banner">
+      <h1>Olá, ${u.name.split(' ')[0]}! 👋</h1>
+      <p>Pronto para aprender sobre nutrição hoje?</p>
+      <div class="stars">⭐</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val">${u.points||0}</div><div class="stat-label">PONTOS</div></div>
+      <div class="stat-card"><div class="stat-icon">🏅</div><div class="stat-val">${(u.badges||[]).length}</div><div class="stat-label">CONQUISTAS</div></div>
+      <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-val">${(prog.completedModules||[]).length}</div><div class="stat-label">MÓDULOS</div></div>
+      <div class="stat-card"><div class="stat-icon">🎮</div><div class="stat-val">${prog.quizzesDone||0}</div><div class="stat-label">QUIZZES</div></div>
+    </div>
+    <div class="card mb-2">
+      <div class="flex-between mb-1"><span class="flex gap-1"><span>⚡</span><strong>Nível ${level}</strong></span><span class="text-muted">${u.points||0}/${nextPts} pts</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <h3 class="mb-2">🏆 Desafios da semana</h3>
+        ${pending.length?pending.map(c=>`
+          <div class="challenge-card">
+            <div class="flex-between"><strong>${c.title}</strong><span class="deadline">📅 ${fmtDate(c.dueDate)}</span></div>
+            <p class="text-muted mt-1" style="font-size:.9rem">${c.description}</p>
+            <button class="btn btn-secondary btn-sm mt-2" onclick="nav('kid-challenges')">Ver desafio →</button>
+          </div>`).join(''):'<div class="card text-muted text-center">Nenhum desafio no momento</div>'}
+      </div>
+      <div>
+        <h3 class="mb-2">🚀 Acesso rápido</h3>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <button class="btn btn-primary" style="justify-content:center" onclick="nav('kid-quiz')">🎮 Jogar Quiz de Nutrição</button>
+          <button class="btn btn-secondary" style="justify-content:center" onclick="nav('kid-recipes')">🍳 Ver Receitas Saudáveis</button>
+          <button class="btn btn-outline" style="justify-content:center" onclick="nav('kid-trails')">📖 Continuar Trilha</button>
+        </div>
+        <div class="card mt-2" style="background:var(--orange-pale)">
+          <strong>💡 Dica do dia</strong>
+          <p class="mt-1" style="font-size:.9rem">Tente colocar pelo menos 3 cores diferentes no seu prato de almoço hoje! 🌈</p>
+        </div>
+      </div>
+    </div>
+  </div>`);
+},
+
+// ---------- KID QUIZ ----------
+kidQuiz(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='kid'){nav('landing');return;}
+  const questions=[...QUIZ].sort(()=>Math.random()-.5).slice(0,10);
+  let current=0,score=0,answered=false;
+
+  const showQ=()=>{
+    const q=questions[current];
+    $('quiz-area').innerHTML=`
+    <div class="quiz-question">
+      <div class="quiz-q-number">Pergunta ${current+1} de ${questions.length}</div>
+      <div class="progress-bar mb-2"><div class="progress-fill" style="width:${(current/questions.length)*100}%"></div></div>
+      <div class="quiz-q-text">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o,i)=>`<button class="quiz-option" data-i="${i}" onclick="window._quizAns(${i})">${o}</button>`).join('')}
+      </div>
+      <div id="quiz-exp" style="margin-top:1rem"></div>
+    </div>`;
+    answered=false;
+  };
+
+  window._quizAns=(i)=>{
+    if(answered)return;answered=true;
+    const q=questions[current];
+    document.querySelectorAll('.quiz-option').forEach((b,idx)=>{
+      b.disabled=true;
+      if(idx===q.c)b.classList.add('correct');
+      else if(idx===i)b.classList.add('wrong');
+    });
+    if(i===q.c){score++;addPoints(5);}
+    $('quiz-exp').innerHTML=`<div class="alert ${i===q.c?'alert-success':'alert-error'}">${i===q.c?'✅ Correto! ':'❌ Errado! '}${q.exp}</div>`;
+    setTimeout(()=>{
+      current++;
+      if(current<questions.length){showQ();}
+      else{
+        const prog=getProgress(u.id);
+        saveProgress(u.id,{quizzesDone:(prog.quizzesDone||0)+1,totalCorrect:(prog.totalCorrect||0)+score});
+        if(score===questions.length)addPoints(20);
+        const pct=Math.round(score/questions.length*100);
+        const msg=pct>=80?'🎉 Excelente! Você é um mestre da nutrição!':pct>=60?'👍 Muito bom! Continue praticando!':'💪 Não desista! Tente novamente!';
+        $('quiz-area').innerHTML=`
+        <div class="quiz-result">
+          <div class="quiz-score">${score}/${questions.length}</div>
+          <h2>${msg}</h2>
+          <p class="text-muted mt-1">${pct}% de acertos · ${score*5} pontos ganhos</p>
+          <div style="display:flex;gap:1rem;justify-content:center;margin-top:1.5rem">
+            <button class="btn btn-primary" onclick="nav('kid-quiz')">🔄 Jogar Novamente</button>
+            <button class="btn btn-outline" onclick="nav('kid-dashboard')">🏠 Início</button>
+          </div>
+        </div>`;
+        checkBadges({...u,points:(u.points||0)+score*5});
+      }
+    },1800);
+  };
+
+  render(this._kidNav('quiz')+`
+  <div style="padding:1.5rem">
+    <div class="quiz-container">
+      <div class="flex-between mb-2">
+        <h2>🎮 Quiz de Nutrição</h2>
+        <button class="btn btn-outline btn-sm" onclick="nav('kid-dashboard')">← Voltar</button>
+      </div>
+      <div id="quiz-area"></div>
+    </div>
+  </div>`);
+  showQ();
+},
+
+// ---------- KID RECIPES ----------
+kidRecipes(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='kid'){nav('landing');return;}
+  let filter='';let diffF='';
+
+  const show=(f='',d='')=>{
+    let list=RECIPES;
+    if(f)list=list.filter(r=>r.cat===f||r.name.toLowerCase().includes(f.toLowerCase()));
+    if(d)list=list.filter(r=>r.diff===d);
+    $('recipes-list').innerHTML=`
+    <div class="recipes-grid">
+      ${list.map(r=>`
+      <div class="recipe-card" onclick="Views._showRecipe('${r.id}')">
+        <div class="recipe-img" style="background:${r.color}">${r.emoji}</div>
+        <div class="recipe-body">
+          <h3>${r.name}</h3>
+          <div class="recipe-meta">
+            <span class="chip">⏱ ${r.time} min</span>
+            <span class="chip">${r.diff==='Fácil'?'🟢':'🟡'} ${r.diff}</span>
+            <span class="chip">🍽 ${r.cat}</span>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  };
+
+  render(this._kidNav('recipes')+`
+  <div style="padding:1.5rem;max-width:900px;margin:0 auto">
+    <div class="flex-between mb-2">
+      <h2>🍳 Receitas Saudáveis</h2>
+    </div>
+    <div class="card mb-2" style="display:flex;gap:1rem;flex-wrap:wrap">
+      <div style="flex:1;min-width:150px">
+        <select id="cat-filter" onchange="document.getElementById('search-filter').value='';Views._filterRecipes()">
+          <option value="">Todas as categorias</option>
+          <option>Bebidas</option><option>Saladas</option><option>Lanches</option>
+          <option>Café da Manhã</option><option>Refeições</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:150px">
+        <select id="diff-filter" onchange="Views._filterRecipes()">
+          <option value="">Qualquer dificuldade</option>
+          <option>Fácil</option><option>Médio</option>
+        </select>
+      </div>
+      <div style="flex:2;min-width:180px">
+        <input id="search-filter" placeholder="🔍 Buscar receita..." oninput="Views._filterRecipes()">
+      </div>
+    </div>
+    <div id="recipes-list"></div>
+  </div>`);
+  show();
+},
+_filterRecipes(){
+  const cat=$('cat-filter')?.value||'';
+  const diff=$('diff-filter')?.value||'';
+  const search=$('search-filter')?.value||'';
+  let list=RECIPES;
+  if(cat)list=list.filter(r=>r.cat===cat);
+  if(diff)list=list.filter(r=>r.diff===diff);
+  if(search)list=list.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));
+  $('recipes-list').innerHTML=`<div class="recipes-grid">${list.map(r=>`
+    <div class="recipe-card" onclick="Views._showRecipe('${r.id}')">
+      <div class="recipe-img" style="background:${r.color}">${r.emoji}</div>
+      <div class="recipe-body"><h3>${r.name}</h3>
+        <div class="recipe-meta">
+          <span class="chip">⏱ ${r.time} min</span>
+          <span class="chip">${r.diff==='Fácil'?'🟢':'🟡'} ${r.diff}</span>
+          <span class="chip">🍽 ${r.cat}</span>
+        </div>
+      </div>
+    </div>`).join('')}</div>`;
+},
+_showRecipe(id){
+  const u=DB.currentUser();
+  const r=RECIPES.find(x=>x.id===id);if(!r)return;
+  const prog=getProgress(u.id);
+  const viewed=(prog.recipesViewed||0)+1;
+  saveProgress(u.id,{recipesViewed:viewed});
+  addPoints(3);checkBadges({...u,badges:u.badges||[]});
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="recipe-modal" id="rm" onclick="if(event.target.id==='rm')document.getElementById('rm').remove()">
+    <div class="recipe-modal-card">
+      <div style="text-align:center;font-size:4rem;background:${r.color};border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem">${r.emoji}</div>
+      <h2 style="margin-bottom:.5rem">${r.name}</h2>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+        <span class="chip">⏱ ${r.time} min</span><span class="chip">${r.diff}</span><span class="chip">${r.cat}</span>
+      </div>
+      <h3 style="margin-bottom:.5rem">🛒 Ingredientes</h3>
+      <ul style="padding-left:1.5rem;margin-bottom:1rem">${r.ingr.map(i=>`<li>${i}</li>`).join('')}</ul>
+      <h3 style="margin-bottom:.5rem">👨‍🍳 Modo de Preparo</h3>
+      <ol style="padding-left:1.5rem;margin-bottom:1rem">${r.steps.map(s=>`<li style="margin-bottom:.4rem">${s}</li>`).join('')}</ol>
+      <div class="alert alert-info">💡 ${r.tip}</div>
+      <button class="btn btn-primary mt-2" style="width:100%;justify-content:center" onclick="document.getElementById('rm').remove()">Fechar</button>
+    </div>
+  </div>`);
+},
+
+// ---------- KID TRAILS ----------
+kidTrails(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='kid'){nav('landing');return;}
+  const prog=getProgress(u.id);
+  const done=prog.completedModules||[];
+  const doneTr=prog.completedTrails||[];
+  render(this._kidNav('trails')+`
+  <div style="padding:1.5rem;max-width:800px;margin:0 auto">
+    <div class="flex-between mb-2">
+      <h2>📚 Trilhas de Aprendizado</h2>
+      <span class="badge badge-green">${done.length} módulos concluídos</span>
+    </div>
+    ${TRAILS.map(t=>{
+      const tdone=t.modules.filter(m=>done.includes(m.id)).length;
+      const allDone=tdone===t.modules.length;
+      return `
+      <div class="trail-card">
+        <div class="trail-header" onclick="this.parentElement.querySelector('.trail-modules').style.display=this.parentElement.querySelector('.trail-modules').style.display==='none'?'flex':'none'">
+          <div class="icon">${t.icon}</div>
+          <div style="flex:1">
+            <h3>${t.name} ${allDone?'✅':''}</h3>
+            <p class="text-muted" style="font-size:.85rem">${t.desc}</p>
+            <div class="progress-bar mt-1" style="height:6px"><div class="progress-fill" style="width:${Math.round(tdone/t.modules.length*100)}%"></div></div>
+            <p class="text-muted mt-1" style="font-size:.75rem">${tdone}/${t.modules.length} módulos</p>
+          </div>
+        </div>
+        <div class="trail-modules">
+          ${t.modules.map(m=>`
+          <div class="module-item ${done.includes(m.id)?'done':''}" onclick="nav('kid-module',{trail:'${t.id}',module:'${m.id}'})">
+            <div class="check">${done.includes(m.id)?'✓':''}</div>
+            <span>${m.title}</span>
+            ${done.includes(m.id)?'<span class="badge badge-green" style="margin-left:auto">+10 pts</span>':''}
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`);
+},
+
+// ---------- KID MODULE ----------
+kidModule(d){
+  const u=DB.currentUser();
+  if(!u||u.role!=='kid'){nav('landing');return;}
+  const trail=TRAILS.find(t=>t.id===d.trail);
+  const mod=trail?.modules.find(m=>m.id===d.module);
+  if(!mod){nav('kid-trails');return;}
+  const prog=getProgress(u.id);
+  const done=(prog.completedModules||[]).includes(mod.id);
+
+  render(this._kidNav('trails')+`
+  <div style="padding:1.5rem">
+    <div style="max-width:700px;margin:0 auto">
+      <div class="flex-between mb-2">
+        <button class="btn btn-outline btn-sm" onclick="nav('kid-trails')">← Trilhas</button>
+        ${done?'<span class="badge badge-green">✅ Concluído</span>':''}
+      </div>
+      <div class="module-reader">${mod.content}</div>
+      ${!done?`<div style="text-align:center;margin-top:1.5rem">
+        <button class="btn btn-primary" onclick="Views._completeModule('${d.trail}','${d.module}')">✅ Marcar como concluído (+10 pts)</button>
+      </div>`:`<div style="text-align:center;margin-top:1.5rem">
+        <button class="btn btn-outline" onclick="nav('kid-trails')">← Voltar às trilhas</button>
+      </div>`}
+    </div>
+  </div>`);
+},
+_completeModule(trailId,modId){
+  const u=DB.currentUser();
+  const prog=getProgress(u.id);
+  const mods=[...(prog.completedModules||[]),modId];
+  const trail=TRAILS.find(t=>t.id===trailId);
+  const allDone=trail.modules.every(m=>mods.includes(m.id));
+  const trails=allDone?[...(prog.completedTrails||[]),trailId]:(prog.completedTrails||[]);
+  saveProgress(u.id,{completedModules:mods,completedTrails:trails});
+  addPoints(10);
+  if(allDone){addPoints(20);toast('🎓 Trilha completa! +20 pontos bônus!');}
+  checkBadges({...u,badges:u.badges||[]});
+  nav('kid-trails');
+},
+
+// ---------- KID CHALLENGES ----------
+kidChallenges(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='kid'){nav('landing');return;}
+  const allC=DB.list('challenges').filter(c=>!c.groupId||c.groupId===u.groupId);
+  const completions=DB.list('completions').filter(x=>x.userId===u.id);
+  const doneIds=completions.map(x=>x.challengeId);
+
+  render(this._kidNav('challenges')+`
+  <div style="padding:1.5rem;max-width:800px;margin:0 auto">
+    <div class="flex-between mb-2">
+      <h2>🏆 Desafios</h2>
+      <span class="badge badge-orange">${doneIds.length} concluídos</span>
+    </div>
+    ${allC.length===0?`<div class="card text-center text-muted"><p style="font-size:2rem">📭</p><p>Nenhum desafio disponível ainda.<br>Aguarde seu professor publicar novos desafios!</p></div>`
+    :allC.map(c=>{
+      const isDone=doneIds.includes(c.id);
+      const days=daysDiff(c.dueDate);
+      return `
+      <div class="challenge-card ${isDone?'challenge-done':''}">
+        <div class="flex-between">
+          <h3>${isDone?'✅ ':''} ${c.title}</h3>
+          <span class="deadline">📅 ${fmtDate(c.dueDate)} ${days>0?'('+days+'d)':days===0?'(hoje!)':'(encerrado)'}</span>
+        </div>
+        <p class="text-muted mt-1">${c.description}</p>
+        ${c.materials&&c.materials.length?`<p class="mt-1 text-muted" style="font-size:.85rem">📎 Materiais: ${c.materials.join(', ')}</p>`:''}
+        ${isDone
+          ?'<span class="badge badge-green mt-2">Concluído! +15 pts</span>'
+          :`<button class="btn btn-secondary btn-sm mt-2" onclick="Views._completeChalKid('${c.id}')">✅ Marcar como concluído (+15 pts)</button>`}
+      </div>`;
+    }).join('')}
+  </div>`);
+},
+_completeChalKid(cid){
+  const u=DB.currentUser();
+  DB.add('completions',{id:DB.uid(),challengeId:cid,userId:u.id,completedAt:new Date().toISOString()});
+  const prog=getProgress(u.id);
+  saveProgress(u.id,{challengesDone:(prog.challengesDone||0)+1});
+  addPoints(15);checkBadges({...u,badges:u.badges||[]});
+  nav('kid-challenges');
+},
+
+// ---------- KID PROFILE ----------
+kidProfile(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='kid'){nav('landing');return;}
+  const prog=getProgress(u.id);
+  const level=Math.floor((u.points||0)/50)+1;
+  const pct=Math.min(100,Math.round(((u.points||0)%50)/50*100));
+  const userBadges=u.badges||[];
+  const group=u.groupId?DB.list('groups').find(g=>g.id===u.groupId):null;
+
+  render(this._kidNav('dash')+`
+  <div style="padding:1.5rem;max-width:700px;margin:0 auto">
+    <div class="card profile-page">
+      <div class="profile-avatar-big">${u.name[0].toUpperCase()}</div>
+      <h2 class="text-center">${u.name}</h2>
+      <p class="text-center text-muted">${u.email}</p>
+      <div class="card mt-2" style="background:var(--green-pale)">
+        <div class="flex-between"><strong>⚡ Nível ${level}</strong><span>${u.points||0} pontos</span></div>
+        <div class="progress-bar mt-1"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <p class="text-muted mt-1" style="font-size:.8rem">Próximo nível em ${level*50-(u.points||0)} pontos</p>
+      </div>
+      <div class="grid-2 mt-2">
+        <div class="card"><strong>Idade:</strong> ${u.age} anos</div>
+        <div class="card"><strong>Atividade:</strong> ${u.activity==='alto'?'Alta 🏃':u.activity==='medio'?'Moderada 🚶':'Baixa 🧘'}</div>
+        <div class="card"><strong>Módulos:</strong> ${(prog.completedModules||[]).length}</div>
+        <div class="card"><strong>Turma:</strong> ${group?group.name:'Sem turma'}</div>
+      </div>
+      ${!u.groupId?`<div class="card mt-2"><h3 class="mb-1">Entrar em uma turma</h3>
+        <div style="display:flex;gap:.5rem"><input id="code-inp" placeholder="Código da turma"><button class="btn btn-primary" onclick="Views._joinGroup()">Entrar</button></div>
+        <div id="group-msg"></div></div>`:''}
+    </div>
+    <div class="card mt-2">
+      <h3 class="mb-2">🏅 Minhas Conquistas</h3>
+      <div class="badges-grid">
+        ${BADGES_DEF.map(b=>`
+        <div class="badge-card ${userBadges.includes(b.id)?'':'locked'}">
+          <div class="icon">${b.icon}</div>
+          <h4>${b.name}</h4>
+          <p>${b.desc}</p>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`);
+},
+async _joinGroup(){
+  const u=DB.currentUser();
+  const code=$('code-inp')?.value.trim().toUpperCase();
+  const g=await DB.lookupGroupByCode(code);
+  if(!g){$('group-msg').innerHTML='<div class="alert alert-error">Código inválido.</div>';return;}
+  u.groupId=g.id;DB.login(u);DB.update('users',u.id,{groupId:g.id});
+  if(!DB.list('groups').find(x=>x.id===g.id)){
+    _cache.groups=[...DB.list('groups'),{id:g.id,name:g.name,code:g.code,desc:'',ownerId:'',createdAt:new Date().toISOString()}];
+  }
+  await DB.loadRemote();
+  const refreshed=DB.list('users').find(x=>x.id===u.id)||u;
+  DB.login(refreshed);
+  toast('Entrou na turma: '+g.name+'!');nav('kid-profile');
+},
+
+// ===================== PRO VIEWS =====================
+_proNav(active){
+  const u=DB.currentUser();
+  return `
+  <div class="navbar">
+    <div class="navbar-brand" onclick="nav('pro-dashboard')"><span>🥦</span> <span style="color:var(--blue-light)">NutriKids</span> <span style="font-size:.75rem;background:var(--blue-pale);color:var(--blue);padding:.2rem .5rem;border-radius:4px;font-weight:700">PORTAL</span></div>
+    <div class="navbar-links">
+      <button class="nav-link pro ${active==='dash'?'active':''}" onclick="nav('pro-dashboard')">📊 Painel</button>
+      <button class="nav-link pro ${active==='groups'?'active':''}" onclick="nav('pro-groups')">👥 Turmas</button>
+      <button class="nav-link pro ${active==='challenges'?'active':''}" onclick="nav('pro-challenges')">🏆 Desafios</button>
+      <button class="nav-link pro ${active==='library'?'active':''}" onclick="nav('pro-library')">📚 Biblioteca</button>
+      <button class="nav-link pro ${active==='notes'?'active':''}" onclick="nav('pro-notes')">📝 Observações</button>
+    </div>
+    <div class="user-menu">
+      <div class="avatar pro" onclick="nav('pro-profile')" style="cursor:pointer">${u.name[0].toUpperCase()}</div>
+      <button class="btn btn-outline btn-sm" onclick="DB.logout();nav('landing')">Sair</button>
+    </div>
+  </div>`;
+},
+
+// ---------- PRO DASHBOARD ----------
+proDashboard(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='pro'){nav('landing');return;}
+  const myGroups=DB.list('groups').filter(g=>g.ownerId===u.id);
+  const groupIds=myGroups.map(g=>g.id);
+  const allUsers=DB.list('users').filter(x=>x.role==='kid'&&groupIds.includes(x.groupId));
+  const allChals=DB.list('challenges').filter(c=>groupIds.includes(c.groupId));
+  const allComps=DB.list('completions').filter(c=>allUsers.find(u=>u.id===c.userId));
+  const totalCompletes=allComps.length;
+  const compRate=allChals.length&&allUsers.length?Math.round(totalCompletes/(allChals.length*allUsers.length)*100):0;
+
+  render(this._proNav('dash')+`
+  <div style="padding:1.5rem;max-width:900px;margin:0 auto">
+    <div class="pro-banner">
+      <h1>Olá, ${u.name.split(' ')[0]}! 👋</h1>
+      <p>Bem-vindo ao Portal NutriKids para Profissionais</p>
+    </div>
+    <div class="indicator-row">
+      <div class="indicator-card"><div class="val">${myGroups.length}</div><div class="lbl">TURMAS</div></div>
+      <div class="indicator-card"><div class="val">${allUsers.length}</div><div class="lbl">ALUNOS</div></div>
+      <div class="indicator-card"><div class="val">${allChals.length}</div><div class="lbl">DESAFIOS</div></div>
+      <div class="indicator-card"><div class="val">${compRate}%</div><div class="lbl">CONCLUSÃO</div></div>
+      <div class="indicator-card"><div class="val">${totalCompletes}</div><div class="lbl">ATIVIDADES CONCL.</div></div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <h3 class="mb-2">👥 Minhas Turmas</h3>
+        ${myGroups.length===0?`<div class="card text-muted text-center">Nenhuma turma.<br><button class="btn btn-blue btn-sm mt-2" onclick="nav('pro-groups')">Criar turma</button></div>`
+        :myGroups.slice(0,3).map(g=>{
+          const members=DB.list('users').filter(x=>x.groupId===g.id);
+          return `<div class="group-card">
+            <div class="flex-between"><strong>${g.name}</strong><code style="background:#f5f5f5;padding:.2rem .5rem;border-radius:4px">${g.code}</code></div>
+            <p class="text-muted" style="font-size:.85rem">${members.length} aluno(s)</p>
+          </div>`;
+        }).join('')}
+        <button class="btn btn-outline btn-sm mt-1" onclick="nav('pro-groups')">Ver todas →</button>
+      </div>
+      <div>
+        <h3 class="mb-2">🏆 Desafios Recentes</h3>
+        ${allChals.length===0?`<div class="card text-muted text-center">Nenhum desafio.<br><button class="btn btn-blue btn-sm mt-2" onclick="nav('pro-challenges')">Criar desafio</button></div>`
+        :allChals.slice(-3).reverse().map(c=>{
+          const comps=allComps.filter(x=>x.challengeId===c.id).length;
+          const total=allUsers.filter(x=>x.groupId===c.groupId).length;
+          return `<div class="challenge-row">
+            <div><strong>${c.title}</strong><br><span class="text-muted" style="font-size:.8rem">${fmtDate(c.dueDate)}</span></div>
+            <span class="badge ${comps>=total?'badge-green':'badge-orange'}">${comps}/${total}</span>
+          </div>`;
+        }).join('')}
+        <button class="btn btn-outline btn-sm mt-1" onclick="nav('pro-challenges')">Ver todos →</button>
+      </div>
+    </div>
+  </div>`);
+},
+
+// ---------- PRO GROUPS ----------
+proGroups(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='pro'){nav('landing');return;}
+  const groups=DB.list('groups').filter(g=>g.ownerId===u.id);
+
+  render(this._proNav('groups')+`
+  <div style="padding:1.5rem;max-width:900px;margin:0 auto">
+    <div class="flex-between mb-2">
+      <h2>👥 Minhas Turmas</h2>
+      <button class="btn btn-blue" onclick="Views._showGroupModal()">+ Nova Turma</button>
+    </div>
+    ${groups.length===0?`<div class="card text-center text-muted"><p style="font-size:2rem">👥</p><p>Nenhuma turma criada ainda.<br>Crie sua primeira turma e compartilhe o código com os alunos!</p></div>`
+    :groups.map(g=>{
+      const members=DB.list('users').filter(x=>x.groupId===g.id);
+      const comps=DB.list('completions');
+      const chals=DB.list('challenges').filter(c=>c.groupId===g.id);
+      return `
+      <div class="group-card">
+        <div class="flex-between">
+          <h3>${g.name}</h3>
+          <button class="btn btn-danger btn-sm" onclick="Views._deleteGroup('${g.id}')">Excluir</button>
+        </div>
+        <p class="text-muted" style="font-size:.85rem">Criada em ${fmtDate(g.createdAt)} · ${chals.length} desafio(s)</p>
+        <div class="card mt-2" style="background:var(--blue-pale)">
+          <strong>Código de convite:</strong>
+          <div class="code-box" onclick="navigator.clipboard.writeText('${g.code}');toast('Código copiado!')">${g.code}</div>
+          <p class="text-muted" style="font-size:.8rem;margin-top:.5rem">Clique para copiar · Compartilhe com os alunos</p>
+        </div>
+        <div class="member-list mt-2">
+          <strong style="font-size:.9rem">👤 Alunos (${members.length})</strong>
+          ${members.length===0?'<p class="text-muted" style="font-size:.85rem">Nenhum aluno ainda.</p>'
+          :members.map(m=>{
+            const mComps=comps.filter(c=>c.userId===m.id&&chals.find(ch=>ch.id===c.challengeId)).length;
+            return `<div class="member-item">
+              <div class="av">${m.name[0]}</div>
+              <span style="flex:1">${m.name}</span>
+              <span class="badge badge-green">${m.points||0} pts</span>
+              <span class="badge badge-blue">${mComps}/${chals.length} desafios</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`);
+},
+_showGroupModal(){
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="modal-overlay" id="gmod" onclick="if(event.target.id==='gmod')document.getElementById('gmod').remove()">
+    <div class="modal-card">
+      <div class="modal-header"><h3>Nova Turma</h3><button class="modal-close" onclick="document.getElementById('gmod').remove()">×</button></div>
+      <div id="gmod-msg"></div>
+      <div class="form-group"><label>Nome da turma</label><input id="g-name" placeholder="Ex: Turma A - 6º ano"></div>
+      <div class="form-group"><label>Descrição (opcional)</label><textarea id="g-desc" rows="2" placeholder="Sobre esta turma..."></textarea></div>
+      <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="Views._createGroup()">Criar Turma</button>
+    </div>
+  </div>`);
+},
+_createGroup(){
+  const u=DB.currentUser();
+  const name=$('g-name')?.value.trim();
+  if(!name){$('gmod-msg').innerHTML='<div class="alert alert-error">Informe o nome.</div>';return;}
+  const g={id:DB.uid(),name,desc:$('g-desc')?.value.trim()||'',code:genCode(),ownerId:u.id,createdAt:new Date().toISOString()};
+  DB.add('groups',g);
+  $('gmod')?.remove();
+  toast('Turma "'+name+'" criada!');
+  nav('pro-groups');
+},
+_deleteGroup(id){
+  if(!confirm('Excluir esta turma?'))return;
+  DB.remove('groups',id);
+  toast('Turma excluída.');nav('pro-groups');
+},
+
+// ---------- PRO CHALLENGES ----------
+proChallenges(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='pro'){nav('landing');return;}
+  const groups=DB.list('groups').filter(g=>g.ownerId===u.id);
+  const groupIds=groups.map(g=>g.id);
+  const chals=DB.list('challenges').filter(c=>groupIds.includes(c.groupId));
+  const allUsers=DB.list('users').filter(x=>x.role==='kid');
+  const comps=DB.list('completions');
+
+  render(this._proNav('challenges')+`
+  <div style="padding:1.5rem;max-width:900px;margin:0 auto">
+    <div class="flex-between mb-2">
+      <h2>🏆 Desafios</h2>
+      <button class="btn btn-blue" onclick="Views._showChalModal()">+ Novo Desafio</button>
+    </div>
+    ${groups.length===0?`<div class="card text-center text-muted">Crie uma turma primeiro para publicar desafios.<br><button class="btn btn-blue btn-sm mt-2" onclick="nav('pro-groups')">Ir para Turmas</button></div>`
+    :chals.length===0?`<div class="card text-center text-muted"><p style="font-size:2rem">🏆</p><p>Nenhum desafio publicado.</p></div>`
+    :chals.map(c=>{
+      const g=groups.find(x=>x.id===c.groupId);
+      const members=allUsers.filter(x=>x.groupId===c.groupId);
+      const done=comps.filter(x=>x.challengeId===c.id).length;
+      const pct=members.length?Math.round(done/members.length*100):0;
+      const days=daysDiff(c.dueDate);
+      return `
+      <div class="card mb-2">
+        <div class="flex-between">
+          <div>
+            <h3>${c.title}</h3>
+            <p class="text-muted" style="font-size:.85rem">Turma: ${g?g.name:'?'} · Prazo: ${fmtDate(c.dueDate)} ${days>=0?'('+days+'d restantes)':'(encerrado)'}</p>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="Views._deleteChal('${c.id}')">Excluir</button>
+        </div>
+        <p class="mt-1">${c.description}</p>
+        ${c.materials&&c.materials.length?`<p class="mt-1 text-muted" style="font-size:.85rem">📎 ${c.materials.join(' · ')}</p>`:''}
+        <div class="mt-2">
+          <div class="flex-between mb-1"><span style="font-size:.85rem"><strong>${done}/${members.length}</strong> alunos concluíram</span><span class="badge ${pct>=80?'badge-green':pct>=50?'badge-orange':'badge-pink'}">${pct}%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${pct>=80?'var(--green-light)':pct>=50?'var(--orange-light)':'var(--pink-light)'}"></div></div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`);
+},
+_showChalModal(){
+  const u=DB.currentUser();
+  const groups=DB.list('groups').filter(g=>g.ownerId===u.id);
+  const libs=DB.list('library_'+u.id)||[];
+  if(!groups.length){toast('Crie uma turma primeiro!','error');nav('pro-groups');return;}
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="modal-overlay" id="cmod" onclick="if(event.target.id==='cmod')document.getElementById('cmod').remove()">
+    <div class="modal-card">
+      <div class="modal-header"><h3>Novo Desafio</h3><button class="modal-close" onclick="document.getElementById('cmod').remove()">×</button></div>
+      <div id="cmod-msg"></div>
+      <div class="form-group"><label>Título</label><input id="c-title" placeholder="Ex: Semana da Hidratação"></div>
+      <div class="form-group"><label>Descrição</label><textarea id="c-desc" rows="3" placeholder="O que os alunos devem fazer?"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Turma</label>
+          <select id="c-group">${groups.map(g=>`<option value="${g.id}">${g.name}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Prazo</label><input id="c-date" type="date" min="${new Date().toISOString().split('T')[0]}"></div>
+      </div>
+      ${libs.length?`<div class="form-group"><label>Materiais da biblioteca</label>
+        <select id="c-mat" multiple style="height:80px">${libs.map(l=>`<option value="${l.title}">${l.title}</option>`).join('')}</select>
+        <p class="text-muted" style="font-size:.8rem">Segure Ctrl para selecionar vários</p>
+      </div>`:''}
+      <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="Views._createChal()">Publicar Desafio</button>
+    </div>
+  </div>`);
+},
+_createChal(){
+  const u=DB.currentUser();
+  const title=$('c-title')?.value.trim();
+  const desc=$('c-desc')?.value.trim();
+  const gid=$('c-group')?.value;
+  const date=$('c-date')?.value;
+  if(!title||!desc||!date){$('cmod-msg').innerHTML='<div class="alert alert-error">Preencha todos os campos.</div>';return;}
+  const matEl=$('c-mat');
+  const materials=matEl?[...matEl.selectedOptions].map(o=>o.value):[];
+  DB.add('challenges',{id:DB.uid(),title,description:desc,groupId:gid,dueDate:date,materials,createdAt:new Date().toISOString(),ownerId:u.id});
+  $('cmod')?.remove();toast('Desafio publicado!');nav('pro-challenges');
+},
+_deleteChal(id){
+  if(!confirm('Excluir este desafio?'))return;
+  DB.remove('challenges',id);toast('Desafio excluído.');nav('pro-challenges');
+},
+
+// ---------- PRO LIBRARY ----------
+proLibrary(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='pro'){nav('landing');return;}
+  const items=DB.list('library_'+u.id)||[];
+  const TYPES=[{icon:'📄',label:'Texto'},{icon:'🖼️',label:'Imagem'},{icon:'🎥',label:'Vídeo'},{icon:'📊',label:'Infográfico'},{icon:'📝',label:'Atividade'}];
+  render(this._proNav('library')+`
+  <div style="padding:1.5rem;max-width:900px;margin:0 auto">
+    <div class="flex-between mb-2">
+      <h2>📚 Biblioteca de Materiais</h2>
+      <button class="btn btn-blue" onclick="Views._showLibModal()">+ Adicionar Material</button>
+    </div>
+    <div class="alert alert-info">Adicione materiais educativos aqui para usar nos desafios das suas turmas.</div>
+    ${items.length===0?'<div class="card text-center text-muted"><p style="font-size:2rem">📚</p><p>Nenhum material adicionado.</p></div>'
+    :`<div class="library-grid">${items.map(it=>`
+      <div class="library-card">
+        <div class="lc-icon">${TYPES.find(t=>t.label===it.type)?.icon||'📄'}</div>
+        <h3 style="font-size:.95rem">${it.title}</h3>
+        <p class="text-muted" style="font-size:.8rem;margin-top:.3rem">${it.type} · ${fmtDate(it.createdAt)}</p>
+        ${it.desc?`<p style="font-size:.85rem;margin-top:.5rem">${it.desc}</p>`:''}
+        <button class="btn btn-danger btn-sm mt-2" onclick="Views._deleteLib('${it.id}')">Excluir</button>
+      </div>`).join('')}</div>`}
+  </div>`);
+},
+_showLibModal(){
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="modal-overlay" id="lmod" onclick="if(event.target.id==='lmod')document.getElementById('lmod').remove()">
+    <div class="modal-card">
+      <div class="modal-header"><h3>Novo Material</h3><button class="modal-close" onclick="document.getElementById('lmod').remove()">×</button></div>
+      <div id="lmod-msg"></div>
+      <div class="form-group"><label>Título</label><input id="l-title" placeholder="Nome do material"></div>
+      <div class="form-group"><label>Tipo</label>
+        <select id="l-type"><option>Texto</option><option>Imagem</option><option>Vídeo</option><option>Infográfico</option><option>Atividade</option></select>
+      </div>
+      <div class="form-group"><label>Descrição</label><textarea id="l-desc" rows="3" placeholder="Sobre este material..."></textarea></div>
+      <div class="form-group"><label>Link (opcional)</label><input id="l-link" placeholder="https://..."></div>
+      <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="Views._addLib()">Salvar Material</button>
+    </div>
+  </div>`);
+},
+_addLib(){
+  const u=DB.currentUser();
+  const title=$('l-title')?.value.trim();
+  if(!title){$('lmod-msg').innerHTML='<div class="alert alert-error">Informe o título.</div>';return;}
+  const item={id:DB.uid(),title,type:$('l-type')?.value||'Texto',desc:$('l-desc')?.value.trim(),link:$('l-link')?.value.trim(),createdAt:new Date().toISOString()};
+  const lib=DB.list('library_'+u.id)||[];
+  lib.push(item);DB.set('library_'+u.id,lib);
+  $('lmod')?.remove();toast('Material adicionado!');nav('pro-library');
+},
+_deleteLib(id){
+  const u=DB.currentUser();
+  const lib=(DB.list('library_'+u.id)||[]).filter(x=>x.id!==id);
+  DB.set('library_'+u.id,lib);toast('Material excluído.');nav('pro-library');
+},
+
+// ---------- PRO NOTES ----------
+proNotes(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='pro'){nav('landing');return;}
+  const notes=DB.list('notes_'+u.id)||[];
+  const groups=DB.list('groups').filter(g=>g.ownerId===u.id);
+  render(this._proNav('notes')+`
+  <div style="padding:1.5rem;max-width:800px;margin:0 auto">
+    <div class="flex-between mb-2">
+      <h2>📝 Observações</h2>
+      <button class="btn btn-blue" onclick="Views._showNoteModal()">+ Nova Observação</button>
+    </div>
+    <div class="alert alert-info">Registre observações pedagógicas e de supervisão sobre suas turmas.</div>
+    ${notes.length===0?'<div class="card text-center text-muted"><p style="font-size:2rem">📝</p><p>Nenhuma observação registrada.</p></div>'
+    :`<div class="notes-list">${notes.map(n=>{
+      const g=groups.find(x=>x.id===n.groupId);
+      return `<div class="note-item">
+        <div class="flex-between mb-1"><strong>${n.title}</strong><span class="text-muted" style="font-size:.8rem">${fmtDate(n.createdAt)}</span></div>
+        ${g?`<span class="badge badge-blue mb-1">👥 ${g.name}</span>`:''}
+        <p style="font-size:.9rem;line-height:1.6">${n.content}</p>
+        <button class="btn btn-danger btn-sm mt-1" onclick="Views._deleteNote('${n.id}')">Excluir</button>
+      </div>`;
+    }).join('')}</div>`}
+  </div>`);
+},
+_showNoteModal(){
+  const u=DB.currentUser();
+  const groups=DB.list('groups').filter(g=>g.ownerId===u.id);
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="modal-overlay" id="nmod" onclick="if(event.target.id==='nmod')document.getElementById('nmod').remove()">
+    <div class="modal-card">
+      <div class="modal-header"><h3>Nova Observação</h3><button class="modal-close" onclick="document.getElementById('nmod').remove()">×</button></div>
+      <div class="form-group"><label>Título</label><input id="n-title" placeholder="Resumo da observação"></div>
+      ${groups.length?`<div class="form-group"><label>Turma (opcional)</label>
+        <select id="n-group"><option value="">Geral</option>${groups.map(g=>`<option value="${g.id}">${g.name}</option>`).join('')}</select>
+      </div>`:''}
+      <div class="form-group"><label>Observação</label><textarea id="n-content" rows="5" placeholder="Descreva sua observação pedagógica..."></textarea></div>
+      <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="Views._addNote()">Salvar</button>
+    </div>
+  </div>`);
+},
+_addNote(){
+  const u=DB.currentUser();
+  const title=$('n-title')?.value.trim();
+  const content=$('n-content')?.value.trim();
+  if(!title||!content){toast('Preencha título e conteúdo.','error');return;}
+  const note={id:DB.uid(),title,content,groupId:$('n-group')?.value||'',createdAt:new Date().toISOString()};
+  const notes=DB.list('notes_'+u.id)||[];
+  notes.unshift(note);DB.set('notes_'+u.id,notes);
+  $('nmod')?.remove();toast('Observação salva!');nav('pro-notes');
+},
+_deleteNote(id){
+  const u=DB.currentUser();
+  const notes=(DB.list('notes_'+u.id)||[]).filter(x=>x.id!==id);
+  DB.set('notes_'+u.id,notes);toast('Observação excluída.');nav('pro-notes');
+},
+
+// ---------- PRO PROFILE ----------
+proProfile(){
+  const u=DB.currentUser();
+  if(!u||u.role!=='pro'){nav('landing');return;}
+  const groups=DB.list('groups').filter(g=>g.ownerId===u.id);
+  const chals=DB.list('challenges').filter(c=>groups.map(g=>g.id).includes(c.groupId));
+  render(this._proNav('dash')+`
+  <div style="padding:1.5rem;max-width:600px;margin:0 auto">
+    <div class="card">
+      <div style="width:70px;height:70px;border-radius:50%;background:var(--blue-light);color:#fff;font-size:1.8rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">${u.name[0].toUpperCase()}</div>
+      <h2 class="text-center">${u.name}</h2>
+      <p class="text-center text-muted">${u.email}</p>
+      ${u.institution?`<p class="text-center" style="margin-top:.5rem"><span class="badge badge-blue">🏫 ${u.institution}</span></p>`:''}
+      <div class="grid-2 mt-2">
+        <div class="card" style="background:var(--blue-pale);text-align:center"><strong style="font-size:1.5rem;color:var(--blue)">${groups.length}</strong><br><span class="text-muted">Turmas</span></div>
+        <div class="card" style="background:var(--green-pale);text-align:center"><strong style="font-size:1.5rem;color:var(--green)">${chals.length}</strong><br><span class="text-muted">Desafios</span></div>
+      </div>
+      <div class="mt-2 form-group">
+        <label>Atualizar nome</label>
+        <div style="display:flex;gap:.5rem">
+          <input id="upd-name" value="${u.name}" placeholder="Novo nome">
+          <button class="btn btn-blue" onclick="Views._updateProName()">Salvar</button>
+        </div>
+      </div>
+      <button class="btn btn-danger mt-2" style="width:100%;justify-content:center" onclick="DB.logout();nav('landing')">Sair da conta</button>
+    </div>
+  </div>`);
+},
+_updateProName(){
+  const u=DB.currentUser();
+  const name=$('upd-name')?.value.trim();
+  if(!name)return;
+  u.name=name;DB.login(u);DB.update('users',u.id,{name});
+  toast('Nome atualizado!');nav('pro-profile');
+}
+
+}; // end Views
+
+// =========================================================
+//  INIT
+// =========================================================
+render('<div class="landing"><div class="landing-logo">🥦</div><h2>Carregando NutriKids...</h2></div>');
+(async function initApp(){
+  await DB.init();
+  const u=DB.currentUser();
+  if(u){u.role==='kid'?nav('kid-dashboard'):nav('pro-dashboard');}
+  else{nav('landing');}
+})();
+</script>
+</body>
+</html>
